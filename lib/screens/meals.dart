@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:meals/widgets/meal_item.dart';
 
 import '../models/meal.dart';
+import 'meals_detailed.dart';
 
 class MealsScreen extends StatelessWidget {
   const MealsScreen({super.key, required this.meals, required this.title});
@@ -8,31 +10,46 @@ class MealsScreen extends StatelessWidget {
   final String title;
   final List<Meal> meals;
 
+  void _selectMeal(BuildContext context, Meal meal) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (ctx) => MealsDetailedScreen(
+                  meal: meal,
+                )));
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget content = ListView.builder(
-        itemCount: meals.length,
-        itemBuilder: (ctx, idx) => Text(meals[idx].title));
-
-    if (meals.isEmpty) {
-      content = Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('Nothing here :(',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineLarge!
-                  .copyWith(color: Theme.of(context).colorScheme.onBackground)),
-          const SizedBox(
-            height: 16,
-          ),
-          Text(
-            'Try select another category',
+    Widget content = Center(
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text('Nothing here :(',
             style: Theme.of(context)
                 .textTheme
-                .bodyLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
-          )
-        ]),
+                .headlineLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onBackground)),
+        const SizedBox(
+          height: 16,
+        ),
+        Text(
+          'Try select another category',
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(color: Theme.of(context).colorScheme.onBackground),
+        )
+      ]),
+    );
+
+    if (meals.isNotEmpty) {
+      content = ListView.builder(
+        itemCount: meals.length,
+        itemBuilder: (ctx, index) => MealItem(
+          meal: meals[index],
+          onSelectMeal: (meal) {
+            _selectMeal(context, meal);
+          },
+        ),
       );
     }
 
